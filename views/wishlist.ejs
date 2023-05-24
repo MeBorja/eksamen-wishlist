@@ -1,0 +1,42 @@
+<%- include('partials/header'); -%>
+
+
+
+<form action="/wishlist" class="form">
+  <h2>Add an item to wishlist</h2>
+  <label for="itemName">Item Name</label>
+  <input type="text" name="itemName"/>
+  <label for="description">Description</label>
+  <input type="text" name="description"/>
+  <button href="" class="button">Add To Wishlist Now</button>
+</form>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  const form = document.querySelector('form');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // get values
+    const itemName = form.itemName.value;
+    const description = form.description.value;
+    const username = document.querySelector('.username').innerText
+    console.log(itemName, description, username);
+    try {
+      const res = await fetch('/wishlist', { 
+        method: 'POST', 
+        body: JSON.stringify({itemName ,description, username }),
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data) {
+        location.assign('/');
+      }
+    }
+    catch (err) {
+      console.log(err);
+    }
+  });
+</script>

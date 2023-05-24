@@ -1,0 +1,48 @@
+<%- include('partials/header'); -%>
+
+<form action="/signup" class="form">
+  <h2>Login</h2>
+  <label for="username" class="labelT">username</label>
+  <input type="text" name="username" class="inputT" />
+  <div class="username error"></div>
+  <label for="password" class="labelT">Password</label>
+  <input type="password" name="password"  class="inputT"/>
+  <div class="password error"></div>
+  <button class="button">login</button>
+</form>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  const form = document.querySelector('form');
+  const usernameError = document.querySelector('.username.error');
+  const passwordError = document.querySelector('.password.error');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // reset errors
+    usernameError.textContent = '';
+    passwordError.textContent = '';
+    // get values
+    const username = form.username.value;
+    const password = form.password.value;
+    try {
+      const res = await fetch('/login', { 
+        method: 'POST', 
+        body: JSON.stringify({ username, password }),
+        headers: {'Content-Type': 'application/json'}
+      });
+      const data = await res.json();
+      if (data.errors) {
+        usernameError.textContent = data.errors.username;
+        passwordError.textContent = data.errors.password;
+      }
+      if (data.user) {
+
+        location.assign(`/home/${data.username}`);
+      }
+    }
+    catch (err) {
+      console.log(err);
+    }
+  });
+</script>

@@ -1,0 +1,31 @@
+{
+  "name": "eksamen-wishlist",
+  "version": "1.0.0",
+  "description": "eksamens oppgave",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeBorja/eksamen-wishlist.git"
+  },
+  "author": "MeBorja",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MeBorja/eksamen-wishlist/issues"
+  },
+  "homepage": "https://github.com/MeBorja/eksamen-wishlist#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.5.0",
+    "mongoose": "^7.2.0",
+    "nodemon": "^2.0.22",
+    "validator": "^13.9.0"
+  }
+}
