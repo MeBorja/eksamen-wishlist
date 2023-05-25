@@ -23,33 +23,15 @@ module.exports.main_get = async (req, res) => {
 };
 
 module.exports.updateWish_post = [requireAuth, async (req, res) => {
-//     const { itemName, description, id } = req.body;
-//     const updatedValue = {
-//       itemName, description
-//     };
-// ;
-//     try {
-//       const updatedWish = await Wishlist.findByIdAndUpdate(id, updatedValue, { new: true }).sort({createdAt: +1});
-//       if (updatedWish) {
-//         console.log('Wish updated:', updatedWish);
-//         res.status(201).json(updatedWish);
-//       } else {
-//         console.log('Wish not found');
-//         res.status(404).json({ error: 'Wish not found' });
-//       }
-//     } catch (err) {
-//       console.log(err);
-//       res.status(400).json({ error: 'An error occurred' });
-//     }
-
-const {itemName, description, id, priorety, username} = req.body
-  }];
-  module.exports.deleteWish_post = [requireAuth, async (req, res) => {
-    const {id } = req.body;
+    const { itemName, description, id } = req.body;
+    const updatedValue = {
+      itemName, description
+    };
 ;
     try {
-      const updatedWish = await Wishlist.findByIdAndDelete(id);
+      const updatedWish = await Wishlist.findByIdAndUpdate(id, updatedValue, { new: true }).sort({createdAt: +1});
       if (updatedWish) {
+        console.log('Wish updated:', updatedWish);
         res.status(201).json(updatedWish);
       } else {
         console.log('Wish not found');
