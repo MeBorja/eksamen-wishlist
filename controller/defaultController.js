@@ -11,7 +11,7 @@ module.exports.main_get = async (req, res) => {
       {
         $group: {
           _id: '$username', // Group by username field
-          document: { $first: '$$ROOT' } // Select the first document for each group
+          document: { $last: '$$ROOT' } // Select the first document for each group
         }
       },
       { $limit: 5 } // Limit the result to 5 documents (optional)
@@ -32,6 +32,22 @@ module.exports.updateWish_post = [requireAuth, async (req, res) => {
       const updatedWish = await Wishlist.findByIdAndUpdate(id, updatedValue, { new: true }).sort({createdAt: +1});
       if (updatedWish) {
         console.log('Wish updated:', updatedWish);
+        res.status(201).json(updatedWish);
+      } else {
+        console.log('Wish not found');
+        res.status(404).json({ error: 'Wish not found' });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({ error: 'An error occurred' });
+    }
+  }];
+  module.exports.deleteWish_post = [requireAuth, async (req, res) => {
+    const {id } = req.body;
+;
+    try {
+      const updatedWish = await Wishlist.findByIdAndDelete(id);
+      if (updatedWish) {
         res.status(201).json(updatedWish);
       } else {
         console.log('Wish not found');

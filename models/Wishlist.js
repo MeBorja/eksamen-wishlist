@@ -19,7 +19,7 @@ const wishlistSchema = new Schema({
     type: Number,
   },
 }, {
-  createdAt: new Date()
+  timestamps: true 
 }
 );
 
