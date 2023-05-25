@@ -3,7 +3,7 @@
 
 
 <div class="main-meny">
-  <% if (user) {  %>
+  <% if (user) { let allow = 0 %>
     <h2><a href="/wishlist"> Add new wish</a></h2>
 <% } %>
 <ul class="recipes">
@@ -18,7 +18,7 @@
           <button type="submit" id="<%= e.username %>" class="btn creatorName"><%= e.username %></button>
         </form>
         <% if (user && user.username === e.username) { %>
-          <button class="editTHISSHIT"> Edit </button>
+          <button class="editTHISSHIT botan"> Edit </button>
           <form class="hide formz " id="<%= e._id  %>">
             <h4 >Update Wish</h4>
             <label for="itemName" name="pokoId" class="formfix pokoId">item name</label>
@@ -29,7 +29,7 @@
           </form>
           <% } %>
 
-      <% if (user && user.username === e.username || user.admin) {%>
+      <% if (user && user.username === e.username ||user && user.admin) { allow = 1%>
         <button class="delete button" id="<%= e._id %>"> <a href="">Delte Wish</a></button>
         <% } %>
 
@@ -46,7 +46,7 @@
   for (let i = 0; i < search.length; i++) {
     search[i].addEventListener("click", function() {
           search[i].style.color="blue";
-          location.assign(`/${search[i].id}`)
+          location.assign(`/user/${search[i].id}`)
       
       })}
 </script>
@@ -89,7 +89,7 @@
   
   
     <% } %>
-    <% if (user && user.admin) { %>
+    <% if (user && allow == 1||user && user.admin) {%>
       <script>
         const btnDelete = document.querySelectorAll('.delete') 
           for (let i = 0; i < btnDelete.length; i++) {
@@ -101,7 +101,7 @@
         
           async function plsWRKFFS(e) {
             try  {
-                const res = await fetch('/deletePokomon', { 
+                const res = await fetch('/deleteWish', { 
                 method: 'POST', 
                 body: JSON.stringify({  id: e }),
                 headers: {'Content-Type': 'application/json'}

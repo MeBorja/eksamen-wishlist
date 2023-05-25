@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, collection } = require('mongoose');
 
 const wishlistSchema = new Schema({
   username: {
@@ -8,8 +8,7 @@ const wishlistSchema = new Schema({
   itemName :  {
     type: String,
     required: [true, 'Please enter an item name'],
-    unique: true,
-    minlength: [3, 'Minimum item name length is 1 characters'],
+    minlength: [1, 'Minimum item name length is 1 characters'],
   },
   description: {
     type: String,
@@ -17,13 +16,14 @@ const wishlistSchema = new Schema({
 
   },
   priorety: {
-    type: String,
-    default: ' '
+    type: Number,
   },
 }, {
   createdAt: new Date()
 }
 );
+
+
 const Wishlist = model('wishlist', wishlistSchema)
 
 module.exports = Wishlist

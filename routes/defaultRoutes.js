@@ -15,6 +15,7 @@ router.post('/wishlist', defaultController.wishlist_post)
 router.get('/user/:id', defaultController.id_get)
 router.get('/home/:id', defaultController.homeUser_get)
 router.post('/updateWish', defaultController.updateWish_post)
+router.post('/deleteWish', defaultController.deleteWish_post)
 
 
 
