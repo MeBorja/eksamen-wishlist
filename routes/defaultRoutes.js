@@ -19,6 +19,7 @@ router.post('/deleteWish', defaultController.deleteWish_post)
 router.post('/wishDeclare', defaultController.wishDeclare_post)
 router.post('/updatePosition', defaultController.updatePosition_post)
 router.get('/admin', requireAuth, checkAdmin, defaultController.admin_get )
+router.get('/veileder', requireAuth, checkAdmin, defaultController.veileder_get )
 
 
 
