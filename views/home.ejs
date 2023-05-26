@@ -5,7 +5,7 @@
 
 <div class="main-meny">
 <ul class="recipes">
-  <% let i = 1; wish.forEach(function(a) { %>
+  <% let i = 1; wish.forEach(function(a) { if (a.itemName !== undefined) { %>
     <li class="recipe" >
       <h2 id="<%= a.itemName %>"> <%=a.itemName%></h2>
       <h4>Description:</h4>
@@ -15,17 +15,6 @@
           <label for="">made by</label>
           <button type="submit" id="<%= a.username %>" class="creatorName btn btnUsername"><%= a.username %></button>
         </form>
-        <% if (user && user.username === a.username) { %>
-          <button class="editTHISSHIT botan"> Edit </button>
-          <form class="hide formz " id="<%= a._id  %>">
-            <h4 >Update Wish</h4>
-            <label for="itemName" name="pokoId" class="formfix pokoId">item name</label>
-            <input type="text" name="itemName" id="itemName" value="<%=a.itemName%>"/>
-            <label for="description" class="formfix">description</label>
-            <input type="text" name="description" id="description" value="<%= a.description %>"/>
-            <button href="" class="update button">Update Now</button>
-          </form>
-          <% } %>
 
       <% if (user && user.username === a.username || user && user.admin) { allow = 1%>
         <button class="delete button" id="<%= a._id %>"><a href="">Delte Wish</a></button>
@@ -33,7 +22,7 @@
 
         
     </li>
-    <% i = i +1}); %>
+    <% i = i +1}}); %>
   
 </div>
 
@@ -51,44 +40,6 @@
       
       })}
 </script>
-
-<% if (user) { %>
-
-  <script>
-    const forms = document.querySelectorAll('.formz')
-    const editButtons = document.querySelectorAll(".editTHISSHIT")
-  
-   editButtons.forEach((button, index) => {
-    button.addEventListener('click', e => {
-      const clickedButton = event.target;
-      const correspondingForm = forms[index];
-      correspondingForm.classList.toggle('hide');
-    })
-  })
-  forms.forEach((a) => {
-    a.addEventListener('submit', async e => {
-      e.preventDefault()
-      
-      let itemName = a.itemName.value
-      let description = a.description.value
-      let id = a.id
-      try {
-        const res = await fetch('/updateWish', { 
-            method: 'POST', 
-            body: JSON.stringify({  id, itemName, description  }),
-            headers: {'Content-Type': 'application/json'}
-                });
-            const data = await res.json()
-            location.reload()
-    } catch (error) {
-      console.log(error);
-    }})})
-    
-  
-  </script>
-
-
-  <% } %>
 
   <% if (user ||user && user.admin) { %>
     <script>
