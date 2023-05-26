@@ -17,6 +17,10 @@ h1, h2, h3, h4, ul, li, a, p, label, div, footer{
   text-shadow: -1px -1px 0 black
 
 }
+.ubackgroundBlack, ubackgroundBlack li  {
+  background-color: black;
+}
+
 
 button{
   color: white
@@ -189,6 +193,10 @@ header .btn{
 }
 title {
   width: 100px;
+}
+
+.title { 
+  margin-bottom: 15px;
 }
 .recipe img{
   width: 100px;

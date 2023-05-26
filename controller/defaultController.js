@@ -140,4 +140,7 @@ module.exports.updateWish_post = [requireAuth, async (req, res) => {
           }]
   
   
-  
+          module.exports.admin_get = (req, res) => {
+            res.render('admin')
+          }
+          

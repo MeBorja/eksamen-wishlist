@@ -16,7 +16,7 @@
       <form >
           <!-- Your form fields go here -->
           <label for="">made by</label>
-          <button type="submit" id="<%= a.username %>" class="creatorName btn"><%= a.username %></button>
+          <button type="submit" id="<%= a.username %>" class="creatorName btn btnUsername"><%= a.username %></button>
         </form>
         <% if (user && user.username === a.username) { %>
           <button class="editTHISSHIT botan"> Edit </button>
@@ -44,7 +44,7 @@
 
 <script>
   
-  const search = document.querySelectorAll('.btn')
+  const search = document.querySelectorAll('.btnUsername')
   
   for (let i = 0; i < search.length; i++) {
     search[i].addEventListener("click", (e) => {

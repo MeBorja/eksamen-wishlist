@@ -6,7 +6,18 @@
 
   <div class="main-meny">
     <% if (user) { %>
-      <h2><a href="/wishlist"> Add new wish</a></h2>
+      <div class="addWish">
+              <h1 class="title"><a class="btn">Add new wish</a></h1>
+                <form action="/wishlist" class="form hide">
+                  <h2>Add an item to wishlist</h2>
+                  <label for="itemName">Wish Name</label>
+                  <input type="text" name="itemName"/>
+                  <label for="description">Description</label>
+                  <input type="text" name="description"/>
+                  <button href="" class="button">Add To Wishlist Now</button>
+                </form>
+      </div>
+
   <% } %>
   <ul class="recipes">
     <% let i = 1; wish.forEach(function(e) { e.wishes.forEach((a) => {  %>
@@ -17,7 +28,7 @@
         <form >
             <!-- Your form fields go here -->
             <label for="">made by</label>
-            <button type="submit" id="<%= a.username %>" class="creatorName btn"><%= a.username %></button>
+            <button type="submit" id="<%= a.username %>" class="creatorName btn btnUsername"><%= a.username %></button>
           </form>
           <% if (user && user.username === a.username) { %>
             <div class="buttonPosition">
@@ -51,7 +62,7 @@
 <script>
 
 
-  const search = document.querySelectorAll('.btn')
+  const search = document.querySelectorAll('.btnUsername')
   for (let i = 0; i < search.length; i++) {
     search[i].addEventListener("click", (e) => {
       e.preventDefault()
@@ -69,10 +80,15 @@
     
     const forms = document.querySelectorAll('.formz')
     const editButtons = document.querySelectorAll(".editTHISSHIT")
+    const addWish = document.querySelector('.form')
+    const btnAddWish = document.querySelector('.title')
+
+    btnAddWish.addEventListener('click', e => {
+      addWish.classList.toggle('hide')
+    })
   
    editButtons.forEach((button, index) => {
     button.addEventListener('click', e => {
-      const clickedButton = e.target;
       const correspondingForm = forms[index];
       correspondingForm.classList.toggle('hide');
     })
