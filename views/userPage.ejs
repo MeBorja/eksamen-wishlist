@@ -1,48 +1,55 @@
 <%- include('partials/header'); -%>
 
-<% if(user.username === userId) {  %>
+<% if(user && user.username === userId) {  %>
 
-<div class="main-meny">
-  <% if (user) {  %>
-    <h2><a href="/wishlist"> Add new wish</a></h2>
-<% } %>
-<ul class="recipes">
-  <% let i = 1; wish.forEach(function(e) { if ( i < 6) { %>
-    <li class="recipe" >
-      <h2 id="<%= e.itemName %>"> <label class="priorety"><%= i %>.</label> <%=e.itemName%></h2>
-      <h4>Description:</h4>
-      <p><%= e.description %></p>
-      <form >
-          <!-- Your form fields go here -->
-          <label for="">made by</label>
-          <button type="submit" id="<%= e.username %>" class="btn creatorName"><%= e.username %></button>
-        </form>
-        <% if (user && user.username === e.username) { %>
-          <button class="editTHISSHIT botan"> Edit </button>
-          <form class="hide formz " id="<%= e._id  %>">
-            <h4 >Update Wish</h4>
-            <button class="botan">↑</button>
-            <button class="botan">↓</button>
-            <label for="itemName" name="pokoId" class="formfix pokoId">item name</label>
-            <input type="text" name="itemName" id="itemName" value="<%=e.itemName%>"/>
-            <label for="description" class="formfix">description</label>
-            <input type="text" name="description" id="description" value="<%= e.description %>"/>
-            <button href="" class="update button">Update Now</button>
+  <% let allow = 0 %>
+
+  <div class="main-meny">
+    <% if (user) { %>
+      <h2><a href="/wishlist"> Add new wish</a></h2>
+  <% } %>
+  <ul class="recipes">
+    <% let i = 1; wish.forEach(function(e) { e.wishes.forEach((a) => {  %>
+      <li class="recipe" >
+        <h2 id="<%= a.itemName %>"><%= i %>. <label id="itemName"><%=a.itemName%></label></h2>
+        <h4>Description:</h4>
+        <p id="description"><%= a.description %></p>
+        <form >
+            <!-- Your form fields go here -->
+            <label for="">made by</label>
+            <button type="submit" id="<%= a.username %>" class="creatorName btn"><%= a.username %></button>
           </form>
-          <% } %>
-
-      <% if (user && user.username === e.username || user.admin) {%>
-        <button class="delete button" id="<%= e._id %>"> <a href="">Delte Wish</a></button>
-        <% } %>
-
-        
-    </li>
-    <% i++} %>
-  <% }); %>
+          <% if (user && user.username === a.username) { %>
+            <div class="buttonPosition">
+              <% if (i > 1) { %>
+                <button class="btn left">↑</button>
+              <% } %>
+              <% if (i < e.wishes.length){%>
+              <button class="btn right">↓</button>
+              <% } %>
+            </div>
+            <button class="editTHISSHIT botan"> Edit </button>
+            <form class="hide formz " id="<%= a._id  %>">
+              <h4 >Update Wish</h4>
+              <label for="itemName" name="pokoId" class="formfix pokoId">item name</label>
+              <input type="text" name="itemName" id="itemName" value="<%=a.itemName%>"/>
+              <label for="description" class="formfix">description</label>
+              <input type="text" name="description" id="description" value="<%= a.description %>"/>
+              <button href="" class="update button">Update Now</button>
+            </form>
+            <% } %>
   
-</div>
+        <% if (user && user.username === a.username || user && user.admin) { allow = 1%>
+          <button class="delete button" id="<%= a._id %>"><a href="">Delte Wish</a></button>
+          <% } %>
+      </li>
+      <%  i++;}); %>
+    <% }); %>
+    
+  </div>
 
 <script>
+
 
   const search = document.querySelectorAll('.btn')
   for (let i = 0; i < search.length; i++) {
@@ -56,36 +63,39 @@
 <% if (user) { %>
 
   <script>
+    
+    //array
+
+    
     const forms = document.querySelectorAll('.formz')
     const editButtons = document.querySelectorAll(".editTHISSHIT")
   
-    editButtons.forEach((button, index) => {
-      button.addEventListener('click', e => {
-        const clickedButton = event.target;
-        const correspondingForm = forms[index];
-        correspondingForm.classList.toggle('hide');
-      })
+   editButtons.forEach((button, index) => {
+    button.addEventListener('click', e => {
+      const clickedButton = e.target;
+      const correspondingForm = forms[index];
+      correspondingForm.classList.toggle('hide');
     })
-    forms.forEach((a) => {
-      a.addEventListener('submit', async e => {
-        e.preventDefault()
-        
-
-        let pokomonName = a.pokomonName.value
-        let ability1 = a.ability1.value
-        let ability2 = a.ability2.value
-        let ability3 = a.ability3.value
-        let id = a.id
-        try {
-          const res = await fetch('/updatePokomon', { 
-              method: 'POST', 
-              body: JSON.stringify({  id, pokomonName, ability1,ability2,ability3  }),
-              headers: {'Content-Type': 'application/json'}
-                  });
-              const data = await res.json()
-      } catch (error) {
-        console.log(error);
-      }})})
+  })
+  forms.forEach((a) => {
+    
+    a.addEventListener('submit', async e => {
+      e.preventDefault()
+      
+      let itemName = a.itemName.value
+      let description = a.description.value
+      let id = a.id
+      try {
+        const res = await fetch('/updateWish', { 
+            method: 'POST', 
+            body: JSON.stringify({  id, itemName, description  }),
+            headers: {'Content-Type': 'application/json'}
+                });
+            const data = await res.json()
+            location.reload()
+    } catch (error) {
+      console.log(error);
+    }})})
     
   
   </script>
@@ -93,8 +103,65 @@
   
     <% } %>
 
-<% if (user && user.admin) { %>
+<% if (user && user.username === userId ||user && user.admin) { %>
   <script>
+    let updatedWishArray = [];
+    let currentPosition = 0;
+  
+    const wishElements = document.querySelectorAll('.recipe');
+  
+    wishElements.forEach((e) => {
+      const itemNameElement = e.querySelector('#itemName').textContent;
+      const descriptionElement = e.querySelector('#description').textContent;
+      const idElement = e.querySelector('.formz').nextElementSibling.id;
+      const usernameElement = e.querySelector('.creatorName').textContent;
+      const position = currentPosition;
+  
+      const moveLeft = (username) => {
+        const itemToMove = updatedWishArray.splice(position, 1)[0]; // Remove item at index 'position' and get the removed item
+        updatedWishArray.splice(position - 1, 0, itemToMove); // Insert the removed item at index 'position - 1'
+        postNewPosition(updatedWishArray, username);
+        location.reload()
+      };
+  
+      const moveRight = (username) => {
+        const itemToMove = updatedWishArray.splice(position, 1)[0]; // Remove item at index 'position' and get the removed item
+        updatedWishArray.splice(position + 1, 0, itemToMove); // Insert the removed item at index 'position + 1'
+        postNewPosition(updatedWishArray, username);
+        location.reload()
+      };
+      if (e.querySelector('.left')) {
+        const leftButton = e.querySelector('.left').addEventListener('click', () => {
+        moveLeft(usernameElement);
+      });
+      }
+      if (e.querySelector('.right')) {
+        const rightButton = e.querySelector('.right').addEventListener('click', () => {
+        moveRight(usernameElement);
+      });
+      } 
+  
+      updatedWishArray.push({ 'itemName': itemNameElement, 'username': usernameElement, '_id': idElement, 'description': descriptionElement });
+      currentPosition = currentPosition + 1;
+    });
+  
+    async function postNewPosition(items, username) {
+      try {
+        const res = await fetch('/updatePosition', {
+          method: 'POST',
+          body: JSON.stringify({ items, username }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.errors) {
+          console.log(data.errors);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+
     const btnDelete = document.querySelectorAll('.delete') 
       for (let i = 0; i < btnDelete.length; i++) {
      btnDelete[i].addEventListener("click", function() {

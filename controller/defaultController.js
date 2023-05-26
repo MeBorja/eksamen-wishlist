@@ -2,19 +2,26 @@ const User = require("../models/User");
 const jwt = require('jsonwebtoken');
 const Wishlist = require('../models/Wishlist')
 const { requireAuth, checkUser, checkAdmin } = require('../middleware/authMiddleware');
-const { handleErrors }  = require('./authController')
+const { handleErrors }  = require('./authController');
+const e = require("express");
 
 module.exports.main_get = async (req, res) => {
   try {
     const data = await Wishlist.aggregate([
-      { $sort: { createdAt: -1 } }, // Sort by createdAt in ascending order
       {
         $group: {
-          _id: '$username', // Group by username field
-          document: { $last: '$$ROOT' } // Select the first document for each group
+          _id: '$username',
+          document: { $last: '$$ROOT' }
         }
       },
-      { $limit: 5 } // Limit the result to 5 documents (optional)
+      { $limit: 5 },
+      {
+        $project: {
+          username: '$document.username',
+          itemName: { $arrayElemAt: ['$document.wishes.itemName', 0] },
+          description: { $arrayElemAt: ['$document.wishes.description', 0] }
+        }
+      }
     ]);
     res.render('home', { wish: data });
   } catch (error) {
@@ -22,40 +29,50 @@ module.exports.main_get = async (req, res) => {
   }
 };
 
+
 module.exports.updateWish_post = [requireAuth, async (req, res) => {
-    const { itemName, description, id } = req.body;
-    const updatedValue = {
-      itemName, description
-    };
-;
-    try {
-      const updatedWish = await Wishlist.findByIdAndUpdate(id, updatedValue, { new: true }).sort({createdAt: +1});
-      if (updatedWish) {
-        console.log('Wish updated:', updatedWish);
-        res.status(201).json(updatedWish);
-      } else {
-        console.log('Wish not found');
-        res.status(404).json({ error: 'Wish not found' });
-      }
-    } catch (err) {
-      console.log(err);
-      res.status(400).json({ error: 'An error occurred' });
+  const { itemName, description, username, id } = req.body;
+  try {
+    const wishlists = await Wishlist.findOneAndUpdate(
+      { 'wishes._id': id },
+      { $set: { 'wishes.$.itemName': itemName, 'wishes.$.description': description, 'wishes.$.username': username } },
+      { new: true }
+    );
+
+    if (wishlists) {
+      res.status(201).json(wishlists);
+    } else {
+      console.log('Wish not found');
+      res.status(404).json({ error: 'Wish not found' });
     }
-  }];
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ error: 'An error occurred' });
+  }
+}];
+
   module.exports.deleteWish_post = [requireAuth, async (req, res) => {
-    const {id } = req.body;
-;
+    const { id } = req.body;
+
     try {
-      const updatedWish = await Wishlist.findByIdAndDelete(id);
-      if (updatedWish) {
-        res.status(201).json(updatedWish);
-      } else {
-        console.log('Wish not found');
-        res.status(404).json({ error: 'Wish not found' });
-      }
+        const wish = await Wishlist.findOneAndUpdate(
+            { 'wishes._id': id },
+            { $pull: { wishes: { _id: id } } },
+            { new: true }
+        );
+
+        if (!wish) {
+            return res.status(404).json({
+                message: 'Wish not found'
+            });
+        }
+
+        res.status(200).json(wish);
     } catch (err) {
-      console.log(err);
-      res.status(400).json({ error: 'An error occurred' });
+        console.log(err);
+        res.status(500).json({
+            message: err.message
+        });
     }
   }];
 
@@ -71,7 +88,7 @@ module.exports.updateWish_post = [requireAuth, async (req, res) => {
     const { itemName, username, description } = req.body;
     try {
       
-      const wishlists = await Wishlist.create({itemName, username, description})
+      const wishlists = await Wishlist.findOneAndUpdate({username}, {"$push" : {"wishes" : {"itemName" : itemName, "description" : description, "username" : username}}})
       res.status(201).json(wishlists)
     } catch (error) {
       console.log(error);
@@ -79,6 +96,41 @@ module.exports.updateWish_post = [requireAuth, async (req, res) => {
     }
     
   }]
+
+  module.exports.updatePosition_post = [checkUser, async (req, res) => {
+    const { items, username } = req.body;
+    try {
+      const wishlist = await Wishlist.findOneAndUpdate(
+        { username }, // Query to find the document by username
+        { $set: { wishes: items } }, // Update the wishes array with the new items array
+        { new: true } // Return the updated document
+      );
+      if (wishlist) {
+        res.status(201).json({ message: 'Wishlist updated successfully' });
+      } else {
+        console.log('Wishlist not found');
+        res.status(404)
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(400)
+    }
+  }];
+
+  module.exports.wishDeclare_post = async (req, res) => {
+    const { itemName, username, description } = req.body;
+    try {
+      
+      const wishlists = await Wishlist.create({username})
+      res.status(201).json(wishlists)
+    } catch (error) {
+      console.log(error);
+      res.status(400)
+    }
+    
+  }
+
+
   module.exports.id_get = [checkUser, async (req,res) => {
     const id = req.params.id
     const list = await Wishlist.find({username:id}).sort({createdAt: +1})

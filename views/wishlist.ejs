@@ -22,6 +22,7 @@
     const itemName = form.itemName.value;
     const description = form.description.value;
     const username = document.querySelector('.username').innerText
+    console.log(itemName, description, username);
     try {
       const res = await fetch('/wishlist', { 
         method: 'POST', 

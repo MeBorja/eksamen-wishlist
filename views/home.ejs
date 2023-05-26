@@ -2,41 +2,41 @@
 
 <% let allow = 0 %>
 
+
 <div class="main-meny">
-  <% if (user) {  %>
+  <% if (user) { %>
     <h2><a href="/wishlist"> Add new wish</a></h2>
 <% } %>
 <ul class="recipes">
-  <% let i = 1; wish.forEach(function(e) { if ( i < 6) { %>
+  <% let i = 1; wish.forEach(function(a) { %>
     <li class="recipe" >
-      <h2 id="<%= e.document.itemName %>"><%=e.document.itemName%></h2>
+      <h2 id="<%= a.itemName %>"> <%=a.itemName%></h2>
       <h4>Description:</h4>
-      <p><%= e.document.description %></p>
+      <p><%= a.description %></p>
       <form >
           <!-- Your form fields go here -->
           <label for="">made by</label>
-          <button type="submit" id="<%= e.document.username %>" class="creatorName btn"><%= e.document.username %></button>
+          <button type="submit" id="<%= a.username %>" class="creatorName btn"><%= a.username %></button>
         </form>
-        <% if (user && user.username === e.document.username) { %>
+        <% if (user && user.username === a.username) { %>
           <button class="editTHISSHIT botan"> Edit </button>
-          <form class="hide formz " id="<%= e.document._id  %>">
+          <form class="hide formz " id="<%= a._id  %>">
             <h4 >Update Wish</h4>
             <label for="itemName" name="pokoId" class="formfix pokoId">item name</label>
-            <input type="text" name="itemName" id="itemName" value="<%=e.document.itemName%>"/>
+            <input type="text" name="itemName" id="itemName" value="<%=a.itemName%>"/>
             <label for="description" class="formfix">description</label>
-            <input type="text" name="description" id="description" value="<%= e.document.description %>"/>
+            <input type="text" name="description" id="description" value="<%= a.description %>"/>
             <button href="" class="update button">Update Now</button>
           </form>
           <% } %>
 
-      <% if (user && user.username === e.document.username || user && user.admin) { allow = 1%>
-        <button class="delete button" id="<%= e.document._id %>"><a href="">Delte Wish</a></button>
+      <% if (user && user.username === a.username || user && user.admin) { allow = 1%>
+        <button class="delete button" id="<%= a._id %>"><a href="">Delte Wish</a></button>
         <% } %>
 
         
     </li>
-    <% i++} %>
-  <% }); %>
+    <% i = i +1}); %>
   
 </div>
 
@@ -57,12 +57,11 @@
 
 <% if (user) { %>
 
-<script>
-
-  const forms = document.querySelectorAll('.formz')
-  const editButtons = document.querySelectorAll(".editTHISSHIT")
-
-  editButtons.forEach((button, index) => {
+  <script>
+    const forms = document.querySelectorAll('.formz')
+    const editButtons = document.querySelectorAll(".editTHISSHIT")
+  
+   editButtons.forEach((button, index) => {
     button.addEventListener('click', e => {
       const clickedButton = event.target;
       const correspondingForm = forms[index];
@@ -87,44 +86,44 @@
     } catch (error) {
       console.log(error);
     }})})
+    
   
-
-</script>
+  </script>
 
 
   <% } %>
 
-  <% if (user && allow == 1||user && user.admin) {%>
-  <script>
-    const btnDelete = document.querySelectorAll('.delete') 
-      for (let i = 0; i < btnDelete.length; i++) {
-     btnDelete[i].addEventListener("click", function(e) {
-       btnDelete[i].style.color="blue";
-       plsWRKFFS(btnDelete[i].id)
+  <% if (user ||user && user.admin) { %>
+    <script>
+      const btnDelete = document.querySelectorAll('.delete') 
+        for (let i = 0; i < btnDelete.length; i++) {
+       btnDelete[i].addEventListener("click", function() {
+         btnDelete[i].style.color="blue";
+         plsWRKFFS(btnDelete[i].id)
+        
+        })}
       
-      })}
-    
-      async function plsWRKFFS(e) {
-        try  {
-            const res = await fetch('/deleteWish', { 
-            method: 'POST', 
-            body: JSON.stringify({  id: e }),
-            headers: {'Content-Type': 'application/json'}
-                });
-            const data = await res.json()
-            if (data.errors) {
-                console.log(data.errors);
-            }
-
-
-        } catch (error) {
-            console.log(error);
-        }
-     }
-
-
-  </script>
-
-<% } %>
+        async function plsWRKFFS(e) {
+          try  {
+              const res = await fetch('/deleteWish', { 
+              method: 'POST', 
+              body: JSON.stringify({  id: e }),
+              headers: {'Content-Type': 'application/json'}
+                  });
+              const data = await res.json()
+              if (data.errors) {
+                  console.log(data.errors);
+              }
+  
+  
+          } catch (error) {
+              console.log(error);
+          }
+       }
+  
+  
+    </script>
+  
+  <% } %>
 
 <%- include('partials/footer') -%>

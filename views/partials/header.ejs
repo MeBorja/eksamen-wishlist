@@ -11,7 +11,8 @@
 
       <% if (user) { %>
         <% if (user.admin) { %>
-          <li>Admin loged in.</li>
+          <li><button class="btn"><a href="/admin">Admin</a></button> loged in.</li>
+
           <% } %>
       <li>Welcome,</li>
       <li class="username"><%= user.username  %></li>

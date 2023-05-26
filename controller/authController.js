@@ -79,3 +79,7 @@ module.exports.logout_get = (req, res) => {
     res.redirect('/')
     
 }
+
+module.exports.admin_get = (req, res) => {
+  res.render('admin')
+}
